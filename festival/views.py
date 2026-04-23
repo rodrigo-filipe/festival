@@ -1,23 +1,17 @@
-from django.shortcuts import render
-from .models import Palco
-
+from django.shortcuts import render, get_object_or_404
+from .models import Palco, Dia, Concerto
 
 def index_view(request):
     return render(request, 'festival/index.html')
 
-
 def dias_view(request):
-    dias = Dia.objects.all() 
+    dias = Dia.objects.prefetch_related('concertos').all()
+    return render(request, 'festival/dias.html', {'dias': dias})
 
-    context = {'dias': dias}
-
-    return render(request, 'festival/dias.html', context)
-
-
+def palcos_view(request):
+    palcos = Palco.objects.prefetch_related('concertos').all()
+    return render(request, 'festival/palcos.html', {'palcos': palcos})
 
 def concerto_view(request, id):
-    concerto = 
-
-    context = {'concerto': concerto}
-
-    return render(request, 'festival/concerto.html', context)
+    concerto = get_object_or_404(Concerto, pk=id)
+    return render(request, 'festival/concerto.html', {'concerto': concerto})
